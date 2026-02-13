@@ -55,8 +55,10 @@ body {
 }
 
 .wheel {
-  width:260px;
-  height:260px;
+  width:80%;
+  height:80%;
+  max-width:260px;
+  max-height:260px;
   background:#ddd;
   border-radius:50%;
   position:relative;
