@@ -1,30 +1,32 @@
-/* FocusPod OS FINAL BUILD */
+/* FocusPod OS FINAL BUILD - FULL PATCH */
 
-const boot = document.getElementById("boot");
-const device = document.getElementById("device");
-const screen = document.getElementById("screen");
-const wheel = document.getElementById("wheel");
-const audio = document.getElementById("audio");
-const fileInput = document.getElementById("fileInput");
-const clockEl = document.getElementById("clock");
+const boot=document.getElementById("boot");
+const device=document.getElementById("device");
+const screen=document.getElementById("screen");
+const wheel=document.getElementById("wheel");
+const audio=document.getElementById("audio");
+const fileInput=document.getElementById("fileInput");
+const clockEl=document.getElementById("clock");
 
-let state = "MAIN";
-let menuIndex = 0;
-let playlist = [];
-let currentTrack = 0;
+let state="MAIN";
+let menuIndex=0;
+let playlist=[];
+let currentTrack=0;
+let lastAngle=null;
+let nowPlayingIndex=null;
 
-const menus = {
-  MAIN: ["Music","Upload","Spotify","Apple","Settings"],
-  SETTINGS: ["Theme","Fullscreen","Back"],
-  THEMES: ["Classic Black","White","Retro Silver","Parlament Blue","Custom HEX","Back"]
+const menus={
+  MAIN:["Music","Upload","Spotify","Apple","Settings"],
+  SETTINGS:["Theme","Fullscreen","Back"],
+  THEMES:["Classic Black","White","Retro Silver","Parlament Blue","Nintendo DS","PS Vita","Switch","iPod Classic","Custom HEX","Back"]
 };
 
 /* BOOT ANIMATION */
-let load = 0;
-const progress = document.querySelector(".boot-progress");
-const bootInt = setInterval(() => {
-  load += 3;
-  progress.style.width = load + "%";
+let load=0;
+const progress=document.querySelector(".boot-progress");
+const bootInt=setInterval(()=>{
+  load+=3;
+  progress.style.width=load+"%";
   if(load>=100){
     clearInterval(bootInt);
     setTimeout(()=>{
@@ -73,20 +75,21 @@ function renderPlaylist(){
 function playTrack(index){
   if(!playlist[index]) return;
   currentTrack=index;
+  nowPlayingIndex=index;
   audio.src=playlist[index].url;
   audio.play();
-  state="NOW";
   renderNowPlaying();
 }
 
 function renderNowPlaying(){
-  const track=playlist[currentTrack];
+  const track=playlist[nowPlayingIndex];
   if(!track) return;
+  state="NOW";
   screen.innerHTML=`<div>Now Playing</div><div>${track.name}</div><div class="progress-bar"><div class="progress" id="prog"></div></div>`;
 }
 
 audio.ontimeupdate=()=>{
-  if(state==="NOW"){
+  if(state==="NOW" && nowPlayingIndex!==null){
     const percent=(audio.currentTime/audio.duration)*100;
     const bar=document.getElementById("prog");
     if(bar) bar.style.width=percent+"%";
@@ -129,9 +132,11 @@ document.addEventListener("keydown",e=>{
 function embedSpotify(url){
   const id=url.split("track/")[1]?.split("?")[0];
   if(!id) return;
+  nowPlayingIndex=null;
   screen.innerHTML=`<iframe src="https://open.spotify.com/embed/track/${id}" width="100%" height="200"></iframe>`;
 }
 function embedApple(url){
+  nowPlayingIndex=null;
   screen.innerHTML=`<iframe src="${url}" width="100%" height="200"></iframe>`;
 }
 
@@ -169,17 +174,20 @@ function applyTheme(choice){
   if(choice==="White") color="#f4f4f4";
   if(choice==="Retro Silver") color="#bfc3c9";
   if(choice==="Parlament Blue") color="#1c2d5a";
+  if(choice==="Nintendo DS") color="#70c0f0";
+  if(choice==="PS Vita") color="#00aaff";
+  if(choice==="Switch") color="#ff4d4d";
+  if(choice==="iPod Classic") color="#f2e5d0";
   if(choice==="Custom HEX"){ const hex=prompt("HEX renk gir (#xxxxxx)"); if(hex) color=hex; }
   if(color){ document.documentElement.style.setProperty("--device",color); localStorage.setItem("fp-theme",color); }
 }
 const saved=localStorage.getItem("fp-theme"); if(saved) document.documentElement.style.setProperty("--device",saved);
 
-/* TOUCH + WHEEL NAV */
-let lastAngle=null;
+/* WHEEL NAV */
 wheel.addEventListener("pointermove",e=>{
   if(e.buttons!==1) return;
   const r=wheel.getBoundingClientRect();
-  const cx=r.left+r.width/2; const cy=r.top+r.height/2;
+  const cx=r.left+r.width/2, cy=r.top+r.height/2;
   const angle=Math.atan2(e.clientY-cy,e.clientX-cx);
   if(lastAngle!==null){
     const delta=angle-lastAngle;
@@ -187,6 +195,17 @@ wheel.addEventListener("pointermove",e=>{
   }
   lastAngle=angle;
 });
+
+/* BUTTONS */
+document.querySelector(".menu").onclick=()=>{
+  if(state==="MAIN") state==="NOW"?renderNowPlaying():renderNowPlaying();
+  else if(state==="NOW") renderMenu();
+  else renderMenu();
+};
+document.querySelector(".play").onclick=()=>{ if(audio.paused) audio.play(); else audio.pause(); };
+document.querySelector(".prev").onclick=()=>{ if(nowPlayingIndex!==null){ currentTrack=(currentTrack-1+playlist.length)%playlist.length; playTrack(currentTrack); } };
+document.querySelector(".next").onclick=()=>{ if(nowPlayingIndex!==null){ currentTrack=(currentTrack+1)%playlist.length; playTrack(currentTrack); } };
+document.getElementById("select").onclick=handleSelect;
 
 /* TOUCH SCREEN */
 screen.addEventListener("click",e=>{
@@ -197,5 +216,4 @@ screen.addEventListener("click",e=>{
 });
 
 /* INITIAL RENDER */
-function init(){ renderMenu(); }
-init();
+renderMenu();
