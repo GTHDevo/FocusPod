@@ -1,4 +1,3 @@
-/* FocusPod OS FINAL STABLE UPGRADE */
 const boot=document.getElementById("boot");
 const device=document.getElementById("device");
 const screen=document.getElementById("screen");
@@ -60,8 +59,8 @@ fileInput.addEventListener("change",e=>{ const files=[...e.target.files]; files.
 function handleSelect(){ const choice=menus.MAIN[menuIndex]; if(choice==="Music") renderPlaylist(); if(choice==="Upload") fileInput.click(); if(choice==="Spotify") handleLinkInput("Spotify"); if(choice==="Apple") handleLinkInput("Apple"); if(choice==="Settings") renderSettings(); }
 
 /* LINK INPUT */
-let linkBuffer=""; let linkType=null;
-function handleLinkInput(type){ state="LINK_INPUT"; linkType=type; linkBuffer=""; renderLinkScreen(); }
+let linkType=null;
+function handleLinkInput(type){ state="LINK_INPUT"; linkType=type; renderLinkScreen(); }
 function renderLinkScreen(){ screen.innerHTML=`<div>Paste ${linkType} link:</div><input type='text' id='linkInputBox' style='width:95%; margin-top:10px;'/><button onclick='submitLink()'>Embed</button>`; }
 function submitLink(){ const val=document.getElementById("linkInputBox").value; if(linkType==="Spotify") embedSpotify(val); if(linkType==="Apple") embedApple(val); }
 
@@ -79,7 +78,12 @@ const saved=localStorage.getItem("fp-theme"); if(saved) document.documentElement
 
 /* OS Theme */
 function renderOSThemes(){ state="OS_THEME"; screen.innerHTML=""; menus.OS_THEMES.forEach((t)=>{ const div=document.createElement("div"); div.className="menu-item"; div.textContent=t; div.onclick=()=>applyOSTheme(t); screen.appendChild(div); }); }
-function applyOSTheme(choice){ if(choice==="Light"){ screen.style.background="#fff"; device.style.background="#eee"; } if(choice==="Dark"){ screen.style.background="#000"; device.style.background="#333"; } if(choice==="iTunes Classic"){ screen.style.background="#000"; device.style.background="#c0c0c0"; } if(choice==="Custom"){ const hex=prompt("HEX gir (#xxxxxx)"); if(hex){ screen.style.background=hex; } } }
+function applyOSTheme(choice){
+  if(choice==="Light"){ screen.style.background="#fff"; screen.style.color="#000"; }
+  if(choice==="Dark"){ screen.style.background="#000"; screen.style.color="#fff"; }
+  if(choice==="iTunes Classic"){ screen.style.background="#000"; screen.style.color="#fff"; }
+  if(choice==="Custom"){ const hex=prompt("HEX gir (#xxxxxx)"); if(hex){ screen.style.background=hex; screen.style.color="#fff"; } }
+}
 
 /* Fonts */
 function renderFonts(){ state="FONT"; screen.innerHTML=""; menus.FONTS.forEach(f=>{ const div=document.createElement("div"); div.className="menu-item"; div.textContent=f; div.onclick=()=>applyFont(f); screen.appendChild(div); }); }
@@ -89,7 +93,7 @@ function applyFont(f){ if(f==="Back") renderSettings(); else document.documentEl
 wheel.addEventListener("pointermove",e=>{ if(e.buttons!==1) return; const r=wheel.getBoundingClientRect(); const cx=r.left+r.width/2, cy=r.top+r.height/2; const angle=Math.atan2(e.clientY-cy,e.clientX-cx); if(lastAngle!==null){ const delta=angle-lastAngle; if(Math.abs(delta)>0.05){ menuIndex+=delta>0?1:-1; menuIndex=(menuIndex+menus.MAIN.length)%menus.MAIN.length; renderMenu(); } } lastAngle=angle; });
 
 /* BUTTONS */
-document.querySelector(".menu").onclick=()=>{ if(state==="MAIN") state==="NOW"?renderNowPlaying():renderNowPlaying(); else if(state==="NOW") renderMenu(); else renderMenu(); };
+document.querySelector(".menu").onclick=()=>{ if(state==="MAIN") renderNowPlaying(); else if(state==="NOW") renderMenu(); else renderMenu(); };
 document.querySelector(".play").onclick=()=>{ if(audio.paused) audio.play(); else audio.pause(); };
 document.querySelector(".prev").onclick=()=>{ if(nowPlayingIndex!==null){ currentTrack=(currentTrack-1+playlist.length)%playlist.length; playTrack(currentTrack); } };
 document.querySelector(".next").onclick=()=>{ if(nowPlayingIndex!==null){ currentTrack=(currentTrack+1)%playlist.length; playTrack(currentTrack); } };
