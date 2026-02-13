@@ -10,35 +10,30 @@
 
 <div id="boot">
   <div class="boot-logo">FocusPod</div>
-  <div class="boot-text">Booting system...</div>
+  <div class="boot-sub">Booting system...</div>
   <div class="boot-bar"><div class="boot-progress"></div></div>
 </div>
 
-<div id="stage" class="hidden">
-
-  <div id="device">
-
-    <div id="screen">
-      <div id="status-bar">
-        <span id="clock"></span>
-        <span id="battery">▮▮▮▮</span>
-      </div>
-      <div id="content"></div>
+<div id="device" class="hidden">
+  <div class="screen">
+    <div class="status-bar">
+      <span id="clock"></span>
+      <span id="battery">▰▰▰▰</span>
     </div>
-
-    <div id="wheel">
-      <div id="menuBtn" class="btn">MENU</div>
-      <div id="prevBtn" class="btn">◀</div>
-      <div id="nextBtn" class="btn">▶</div>
-      <div id="playBtn" class="btn">⏯</div>
-      <div id="centerBtn"></div>
-    </div>
-
+    <div id="screen-content"></div>
   </div>
 
+  <div class="wheel" id="wheel">
+    <button class="btn top" id="menuBtn">MENU</button>
+    <button class="btn left" id="prevBtn">◀</button>
+    <button class="btn right" id="nextBtn">▶</button>
+    <button class="btn bottom" id="playBtn">⏯</button>
+    <button class="center" id="selectBtn"></button>
+  </div>
 </div>
 
-<input type="file" id="fileInput" accept="audio/*">
+<input type="file" id="fileInput" accept="audio/mp3" multiple hidden>
+<audio id="audio"></audio>
 
 <script src="app.js"></script>
 </body>
