@@ -1,76 +1,32 @@
-// Menu Logic
-const menuItems = document.querySelectorAll('.menu-item');
-let currentScreen = 'music';
+const menuItems = document.querySelectorAll('#menu li');
+let selectedIndex = 0;
 
-menuItems.forEach(item => {
-    item.addEventListener('click', () => {
-        menuItems.forEach(i => i.classList.remove('selected'));
-        item.classList.add('selected');
-        currentScreen = item.dataset.screen;
-        renderScreen(currentScreen);
-    });
-});
-
-function renderScreen(screen){
-    const content = document.getElementById('content-screen');
-    content.innerHTML = '';
-    if(screen==='music'){
-        content.innerHTML = '<p>Music Player</p>';
-    } else if(screen==='upload'){
-        content.innerHTML = '<p>Upload your MP3</p>';
-    } else if(screen==='spotify'){
-        content.innerHTML = '<p>Spotify Embed</p>';
-    } else if(screen==='apple'){
-        content.innerHTML = '<p>Apple Music Embed</p>';
-    } else if(screen==='settings'){
-        content.innerHTML = '<p>Settings</p>';
-    }
+function updateMenu() {
+  menuItems.forEach((li,i) => {
+    li.classList.toggle('selected', i===selectedIndex);
+  });
 }
 
-// Clock
-function updateClock(){
-    const now = new Date();
-    const clock = document.getElementById('clock');
-    clock.textContent = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-}
-setInterval(updateClock,1000);
-updateClock();
+updateMenu();
 
-// Wheel Buttons
-document.getElementById('wheel-button-menu').addEventListener('click', ()=>{
-    renderScreen('music');
-    menuItems.forEach(i=>i.classList.remove('selected'));
-    menuItems[0].classList.add('selected');
+// Wheel click simulation
+document.querySelector('#wheel-right').addEventListener('click', () => {
+  selectedIndex = (selectedIndex+1) % menuItems.length;
+  updateMenu();
 });
-
-// Theme System
-const pod = document.getElementById('pod-body');
-const themes = ['theme-classic-white','theme-black','theme-blue','theme-pink','theme-green','theme-purple','theme-orange','theme-produced-red'];
-
-function setTheme(name){
-    pod.className = '';
-    pod.classList.add(name);
-}
-
-// Embed modal
-const embedModal = document.getElementById('embed-modal');
-const embedInput = document.getElementById('embed-input');
-const embedSave = document.getElementById('embed-save');
-const embedCancel = document.getElementById('embed-cancel');
-
-document.getElementById('menu-list').addEventListener('click', (e)=>{
-    if(e.target.dataset.screen==='spotify' || e.target.dataset.screen==='apple'){
-        embedModal.classList.remove('hidden');
-    }
+document.querySelector('#wheel-left').addEventListener('click', () => {
+  selectedIndex = (selectedIndex-1 + menuItems.length) % menuItems.length;
+  updateMenu();
 });
-
-embedCancel.addEventListener('click', ()=>{
-    embedModal.classList.add('hidden');
+document.querySelector('#wheel-select').addEventListener('click', () => {
+  const selected = menuItems[selectedIndex].textContent;
+  if(selected === 'Spotify' || selected === 'Apple') {
+    document.querySelector('#music-modal').classList.remove('hidden');
+  }
 });
-embedSave.addEventListener('click', ()=>{
-    const val = embedInput.value.trim();
-    if(val!==''){
-        alert('Link saved: '+val); // placeholder for embed logic
-    }
-    embedModal.classList.add('hidden');
+document.querySelector('#save-link').addEventListener('click', () => {
+  document.querySelector('#music-modal').classList.add('hidden');
+});
+document.querySelector('#cancel-link').addEventListener('click', () => {
+  document.querySelector('#music-modal').classList.add('hidden');
 });
