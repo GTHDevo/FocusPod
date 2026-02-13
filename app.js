@@ -1,4 +1,4 @@
-/* FocusPod OS FINAL BUILD - FULL PATCH */
+/* FocusPod OS UPGRADE - FULL PATCH */
 
 const boot=document.getElementById("boot");
 const device=document.getElementById("device");
@@ -12,16 +12,18 @@ let state="MAIN";
 let menuIndex=0;
 let playlist=[];
 let currentTrack=0;
-let lastAngle=null;
 let nowPlayingIndex=null;
+let lastAngle=null;
 
 const menus={
   MAIN:["Music","Upload","Spotify","Apple","Settings"],
-  SETTINGS:["Theme","Fullscreen","Back"],
-  THEMES:["Classic Black","White","Retro Silver","Parlament Blue","Nintendo DS","PS Vita","Switch","iPod Classic","Custom HEX","Back"]
+  SETTINGS:["Theme","OS Theme","Font","Fullscreen","Back"],
+  THEMES:["Classic Black","White","Retro Silver","Parlament Blue","Nintendo DS","PS Vita","Switch","iPod Classic","Aqua Blue","Custom HEX","Back"],
+  OS_THEMES:["Light","Dark","iTunes Classic","Custom","Back"],
+  FONTS:["Helvetica","Arial","Courier New","Roboto","Back"]
 };
 
-/* BOOT ANIMATION */
+/* BOOT */
 let load=0;
 const progress=document.querySelector(".boot-progress");
 const bootInt=setInterval(()=>{
@@ -123,12 +125,16 @@ function handleLinkInput(type){ state="LINK_INPUT"; linkType=type; linkBuffer=""
 function renderLinkScreen(){ screen.innerHTML=`<div>Paste ${linkType} link:</div><div style='margin-top:10px; word-break:break-all; font-size:12px;'>${linkBuffer||"_"}</div>`; }
 document.addEventListener("keydown",e=>{
   if(state!=="LINK_INPUT") return;
-  if(e.key==="Enter"){ if(linkType==="Spotify") embedSpotify(linkBuffer); if(linkType==="Apple") embedApple(linkBuffer); return; }
+  if(e.key==="Enter"){ 
+    if(linkType==="Spotify") embedSpotify(linkBuffer); 
+    if(linkType==="Apple") embedApple(linkBuffer); 
+    return; 
+  }
   if(e.key==="Backspace"){ linkBuffer=linkBuffer.slice(0,-1); renderLinkScreen(); return; }
   if(e.key.length===1){ linkBuffer+=e.key; renderLinkScreen(); }
 });
 
-/* EMBED FUNCTIONS */
+/* EMBED */
 function embedSpotify(url){
   const id=url.split("track/")[1]?.split("?")[0];
   if(!id) return;
@@ -152,11 +158,15 @@ function renderSettings(){
     screen.appendChild(div);
   });
 }
+
 function handleSettings(choice){
   if(choice==="Theme") renderThemes();
+  if(choice==="OS Theme") renderOSThemes();
+  if(choice==="Font") renderFonts();
   if(choice==="Fullscreen") document.documentElement.requestFullscreen();
   if(choice==="Back") renderMenu();
 }
+
 function renderThemes(){
   state="THEME";
   screen.innerHTML="";
@@ -168,6 +178,7 @@ function renderThemes(){
     screen.appendChild(div);
   });
 }
+
 function applyTheme(choice){
   let color="";
   if(choice==="Classic Black") color="#111";
@@ -178,10 +189,48 @@ function applyTheme(choice){
   if(choice==="PS Vita") color="#00aaff";
   if(choice==="Switch") color="#ff4d4d";
   if(choice==="iPod Classic") color="#f2e5d0";
+  if(choice==="Aqua Blue") color="#89c7f2";
   if(choice==="Custom HEX"){ const hex=prompt("HEX renk gir (#xxxxxx)"); if(hex) color=hex; }
   if(color){ document.documentElement.style.setProperty("--device",color); localStorage.setItem("fp-theme",color); }
 }
+
 const saved=localStorage.getItem("fp-theme"); if(saved) document.documentElement.style.setProperty("--device",saved);
+
+/* OS Theme */
+function renderOSThemes(){
+  state="OS_THEME";
+  screen.innerHTML="";
+  menus.OS_THEMES.forEach((t)=>{
+    const div=document.createElement("div");
+    div.className="menu-item";
+    div.textContent=t;
+    div.onclick=()=>applyOSTheme(t);
+    screen.appendChild(div);
+  });
+}
+function applyOSTheme(choice){
+  if(choice==="Light"){ document.body.style.background="#eee"; screen.style.background="#000"; }
+  if(choice==="Dark"){ document.body.style.background="#111"; screen.style.background="#000"; }
+  if(choice==="iTunes Classic"){ document.body.style.background="#c0c0c0"; screen.style.background="#000"; }
+  if(choice==="Custom"){ const hex=prompt("HEX arka plan gir (#xxxxxx)"); if(hex) document.body.style.background=hex; }
+}
+
+/* Fonts */
+function renderFonts(){
+  state="FONT";
+  screen.innerHTML="";
+  menus.FONTS.forEach(f=>{
+    const div=document.createElement("div");
+    div.className="menu-item";
+    div.textContent=f;
+    div.onclick=()=>applyFont(f);
+    screen.appendChild(div);
+  });
+}
+function applyFont(f){
+  if(f==="Back") renderSettings();
+  else document.documentElement.style.setProperty("--font-family",f);
+}
 
 /* WHEEL NAV */
 wheel.addEventListener("pointermove",e=>{
@@ -207,7 +256,7 @@ document.querySelector(".prev").onclick=()=>{ if(nowPlayingIndex!==null){ curren
 document.querySelector(".next").onclick=()=>{ if(nowPlayingIndex!==null){ currentTrack=(currentTrack+1)%playlist.length; playTrack(currentTrack); } };
 document.getElementById("select").onclick=handleSelect;
 
-/* TOUCH SCREEN */
+/* TOUCH */
 screen.addEventListener("click",e=>{
   if(!e.target.classList.contains("menu-item")) return;
   const items=[...document.querySelectorAll(".menu-item")];
@@ -215,5 +264,5 @@ screen.addEventListener("click",e=>{
   handleSelect();
 });
 
-/* INITIAL RENDER */
+/* INITIAL */
 renderMenu();
