@@ -1,31 +1,49 @@
-<div id="pod-container" class="pod black-theme">
-  <div id="pod-screen">
-    <div id="status-bar">
-      <span id="clock">22:00</span>
-      <span id="battery">100%</span>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FocusPod OS</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="focuspod">
+    <div id="pod-body" class="theme-classic-white">
+        <!-- Screen -->
+        <div id="pod-screen">
+            <div id="status-bar">
+                <span id="clock">00:00</span>
+                <span id="battery">100%</span>
+            </div>
+            <div id="os-container">
+                <ul id="menu-list">
+                    <li class="menu-item selected" data-screen="music">Music</li>
+                    <li class="menu-item" data-screen="upload">Upload</li>
+                    <li class="menu-item" data-screen="spotify">Spotify</li>
+                    <li class="menu-item" data-screen="apple">Apple</li>
+                    <li class="menu-item" data-screen="settings">Settings</li>
+                </ul>
+                <div id="content-screen">
+                    <p>Welcome to FocusPod OS</p>
+                </div>
+            </div>
+            <!-- Spotify / Apple modal -->
+            <div id="embed-modal" class="hidden">
+                <textarea id="embed-input" placeholder="Paste Spotify or Apple Music link"></textarea>
+                <button id="embed-save">Save</button>
+                <button id="embed-cancel">Cancel</button>
+            </div>
+        </div>
+        <!-- Click Wheel -->
+        <div id="click-wheel">
+            <div id="wheel-button-menu">MENU</div>
+            <div id="wheel-button-select">SELECT</div>
+            <div id="wheel-button-prev">&#9664;</div>
+            <div id="wheel-button-next">&#9654;</div>
+            <div id="wheel-button-play">&#9658;&#9642;</div>
+        </div>
     </div>
-    <ul id="menu">
-      <li>Music</li>
-      <li>Upload</li>
-      <li>Spotify</li>
-      <li>Apple</li>
-      <li>Settings</li>
-      <li>Other</li>
-    </ul>
-    <!-- Spotify / Apple Modal -->
-    <div id="music-modal" class="hidden">
-      <textarea placeholder="Paste Spotify or Apple Music link"></textarea>
-      <button id="save-link">Save</button>
-      <button id="cancel-link">Cancel</button>
-    </div>
-  </div>
-
-  <!-- Click wheel -->
-  <div id="click-wheel">
-    <div id="wheel-menu">MENU</div>
-    <div id="wheel-select">SELECT</div>
-    <div id="wheel-left">&#9664;</div>
-    <div id="wheel-right">&#9654;</div>
-    <div id="wheel-play">&#9658;&#9642;</div>
-  </div>
 </div>
+<script src="app.js"></script>
+</body>
+</html>
