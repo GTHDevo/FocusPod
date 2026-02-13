@@ -1,129 +1,123 @@
 :root{
---device:#111;
---wheel:#1c1c1c;
---screen:#f4f4f4;
---accent:#007aff;
---text:#000;
+  --device:#111;
+  --screen:#0c0c0c;
+  --accent:#4a90e2;
+  --text:#fff;
 }
 
 body{
-margin:0;
-background:#0f0f0f;
-font-family:Arial, sans-serif;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-transition:.3s;
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#050505;
+  font-family:-apple-system, sans-serif;
 }
 
 .hidden{display:none}
 
-/* BOOT */
+/* Boot */
 #boot{
-position:absolute;
-width:100%;
-height:100%;
-background:#000;
-color:#fff;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
+  position:absolute;
+  text-align:center;
+  color:white;
 }
 
 .boot-bar{
-width:220px;height:4px;background:#222;margin-top:15px;
+  width:200px;
+  height:6px;
+  background:#222;
+  border-radius:5px;
+  margin-top:20px;
 }
 
 .boot-progress{
-height:100%;width:0;background:#fff;
-animation:boot 2.5s forwards;
+  height:100%;
+  width:0%;
+  background:white;
 }
 
-@keyframes boot{to{width:100%}}
-
-/* DEVICE */
+/* Device */
 #device{
-width:320px;
-height:520px;
-background:var(--device);
-border-radius:40px;
-padding:30px;
-box-shadow:
-inset -6px -6px 15px rgba(0,0,0,.6),
-inset 6px 6px 15px rgba(255,255,255,.05),
-0 30px 60px rgba(0,0,0,.7);
-transition:.3s;
+  width:340px;
+  height:560px;
+  border-radius:40px;
+  background:var(--device);
+  padding:30px;
+  box-shadow:
+    inset 0 6px 20px rgba(255,255,255,.08),
+    0 30px 70px rgba(0,0,0,.6);
 }
 
-#screen{
-height:45%;
-background:var(--screen);
-border-radius:12px;
-padding:10px;
-display:flex;
-flex-direction:column;
-color:var(--text);
+/* Screen */
+.screen{
+  height:40%;
+  background:var(--screen);
+  border-radius:20px;
+  padding:10px;
+  color:var(--text);
+  overflow:hidden;
+  font-size:14px;
 }
 
-#status-bar{
-display:flex;
-justify-content:space-between;
-font-size:12px;
+.status-bar{
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
 }
 
-#content{
-flex:1;
-margin-top:10px;
-overflow:hidden;
-font-size:14px;
+.menu-item{
+  padding:6px;
 }
 
-.item{padding:6px}
-.selected{
-background:var(--accent);
-color:#fff;
-border-radius:4px;
-}
-
-/* WHEEL */
-#wheel{
-margin:30px auto 0;
-width:250px;height:250px;
-background:var(--wheel);
-border-radius:50%;
-position:relative;
-box-shadow:
-inset -4px -4px 10px rgba(0,0,0,.7),
-inset 4px 4px 10px rgba(255,255,255,.05);
-}
-
-#centerBtn{
-position:absolute;
-width:100px;height:100px;
-background:#222;
-border-radius:50%;
-top:50%;left:50%;
-transform:translate(-50%,-50%);
-}
-
-.btn{
-position:absolute;
-font-size:12px;
-cursor:pointer;
-user-select:none;
-}
-
-#menuBtn{top:15px;left:50%;transform:translateX(-50%)}
-#prevBtn{left:15px;top:50%;transform:translateY(-50%)}
-#nextBtn{right:15px;top:50%;transform:translateY(-50%)}
-#playBtn{bottom:15px;left:50%;transform:translateX(-50%)}
-
-.progress{
-height:4px;background:#ccc;margin-top:10px;border-radius:4px;
+.active{
+  background:var(--accent);
 }
 
 .progress-bar{
-height:100%;background:var(--accent);width:0;border-radius:4px;
+  height:4px;
+  background:#222;
+  margin-top:10px;
+  border-radius:4px;
 }
+
+.progress{
+  height:100%;
+  width:0%;
+  background:var(--accent);
+}
+
+/* Wheel */
+.wheel{
+  margin-top:40px;
+  width:100%;
+  aspect-ratio:1/1;
+  border-radius:50%;
+  background:radial-gradient(circle,#333,#111);
+  position:relative;
+}
+
+.center{
+  position:absolute;
+  width:40%;
+  height:40%;
+  border-radius:50%;
+  background:#222;
+  border:none;
+  top:30%;
+  left:30%;
+}
+
+.btn{
+  position:absolute;
+  background:none;
+  border:none;
+  color:white;
+  font-size:12px;
+}
+
+.top{top:5%;left:50%;transform:translateX(-50%)}
+.bottom{bottom:5%;left:50%;transform:translateX(-50%)}
+.left{left:5%;top:50%;transform:translateY(-50%)}
+.right{right:5%;top:50%;transform:translateY(-50%)}
