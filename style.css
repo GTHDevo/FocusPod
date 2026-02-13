@@ -1,103 +1,76 @@
 body {
-  margin: 0;
-  background: #111;
-  font-family: sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  margin:0;
+  background:#111;
+  font-family:sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
 
-.hidden { display: none; }
+.hidden { display:none; }
 
 #boot {
-  text-align: center;
-  color: white;
+  text-align:center;
+  color:white;
 }
 
-.boot-logo {
-  font-size: 28px;
-  margin-bottom: 10px;
-}
-
-.boot-bar {
-  width: 200px;
-  height: 6px;
-  background: #333;
-  margin: auto;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.boot-progress {
-  height: 100%;
-  width: 0%;
-  background: white;
-  animation: boot 2s forwards;
-}
-
-@keyframes boot {
-  to { width: 100%; }
-}
+.boot-logo { font-size:28px; margin-bottom:10px; }
+.boot-bar { width:200px; height:6px; background:#333; margin:auto; border-radius:5px; overflow:hidden; }
+.boot-progress { height:100%; width:0%; background:white; animation:boot 2s forwards; }
+@keyframes boot { to{width:100%;} }
 
 #device {
-  width: 320px;
-  height: 520px;
-  background: var(--device, #eee);
-  border-radius: 40px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-  padding: 20px;
-  box-sizing: border-box;
+  width:320px;
+  height:520px;
+  background:var(--device,#eee);
+  border-radius:40px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.6);
+  padding:20px;
+  box-sizing:border-box;
 }
 
-.topbar { display: flex; justify-content: space-between; padding: 5px 10px; color:white; }
+.screen-top { display:flex; justify-content:space-between; padding:5px 10px; color:white; }
 
 .screen {
-  height: 180px;
-  background: black;
-  color: white;
-  border-radius: 12px;
-  padding: 10px;
-  overflow: hidden;
-  position: relative;
+  height:180px;
+  background:black;
+  color:white;
+  border-radius:12px;
+  padding:10px;
+  overflow:hidden;
+  position:relative;
 }
 
 .wheel {
-  width: 260px;
-  height: 260px;
-  background: #ddd;
-  border-radius: 50%;
-  margin: 30px auto 0;
-  position: relative;
+  width:260px;
+  height:260px;
+  background:#ddd;
+  border-radius:50%;
+  margin:30px auto 0;
+  position:relative;
   box-shadow: inset 0 5px 15px rgba(0,0,0,0.2);
 }
 
-.btn {
-  position: absolute;
-  background: none;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.menu { top: 20px; left: 50%; transform: translateX(-50%); }
-.prev { left: 20px; top: 50%; transform: translateY(-50%); }
-.next { right: 20px; top: 50%; transform: translateY(-50%); }
-.play { bottom: 20px; left: 50%; transform: translateX(-50%); }
+.btn { position:absolute; background:none; border:none; font-weight:bold; cursor:pointer; }
+.menu { top:20px; left:50%; transform:translateX(-50%); }
+.prev { left:20px; top:50%; transform:translateY(-50%); }
+.next { right:20px; top:50%; transform:translateY(-50%); }
+.play { bottom:20px; left:50%; transform:translateX(-50%); }
 
 .center {
-  width: 90px;
-  height: 90px;
-  background: #bbb;
-  border-radius: 50%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width:90px;
+  height:90px;
+  background:#bbb;
+  border-radius:50%;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
 }
 
-.menu-item { padding: 6px; cursor: pointer; }
-.menu-item.active { background: white; color: black; }
+.menu-item { padding:6px; cursor:pointer; }
+.menu-item.active { background:white; color:black; }
 
-.progress-bar { width: 100%; height: 6px; background: #333; margin-top:10px; border-radius:3px; overflow:hidden; }
+.progress-bar { width:100%; height:6px; background:#333; margin-top:10px; border-radius:3px; overflow:hidden; }
 .progress { width:0%; height:100%; background:white; }
