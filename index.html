@@ -7,33 +7,44 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<div id="boot">
-  <div class="boot-logo">FocusPod</div>
-  <div class="boot-text">Booting system...</div>
-  <div class="boot-bar"><div class="boot-progress"></div></div>
-</div>
-
-<div id="device" class="hidden">
-  <div class="screen-top">
-    <span id="clock"></span>
-    <span class="battery">▰▰▰▰</span>
-  </div>
-  <div class="screen" id="screen"></div>
-
-  <div class="wheel-container">
-    <div class="wheel" id="wheel">
-      <button class="btn menu">MENU</button>
-      <button class="btn prev">◀</button>
-      <button class="btn next">▶</button>
-      <button class="btn play">⏯</button>
-      <div class="center" id="select"></div>
+<div id="focuspod">
+    <div id="pod-body" class="theme-classic-white">
+        <!-- Ekran -->
+        <div id="pod-screen">
+            <div id="status-bar">
+                <span id="clock">00:00</span>
+                <span id="battery">100%</span>
+            </div>
+            <div id="os-container">
+                <ul id="menu-list">
+                    <li class="menu-item selected" data-screen="music">Music</li>
+                    <li class="menu-item" data-screen="upload">Upload</li>
+                    <li class="menu-item" data-screen="spotify">Spotify</li>
+                    <li class="menu-item" data-screen="apple">Apple</li>
+                    <li class="menu-item" data-screen="settings">Settings</li>
+                </ul>
+                <div id="content-screen">
+                    <p>Welcome to FocusPod OS</p>
+                </div>
+            </div>
+        </div>
+        <!-- Click Wheel -->
+        <div id="click-wheel">
+            <div id="wheel-button-menu">MENU</div>
+            <div id="wheel-button-select">SELECT</div>
+            <div id="wheel-button-prev">&#9664;</div>
+            <div id="wheel-button-next">&#9654;</div>
+            <div id="wheel-button-play">&#9658;&#9642;</div>
+        </div>
     </div>
-  </div>
 </div>
 
-<input type="file" id="fileInput" accept="audio/*" hidden>
-<audio id="audio"></audio>
+<!-- Spotify / Apple embed modal -->
+<div id="embed-modal" class="hidden">
+    <textarea id="embed-input" placeholder="Paste Spotify or Apple Music link"></textarea>
+    <button id="embed-save">Save</button>
+    <button id="embed-cancel">Cancel</button>
+</div>
 
 <script src="app.js"></script>
 </body>
