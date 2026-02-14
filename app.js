@@ -1,122 +1,183 @@
-const screen=document.getElementById("screen-content");
+const screen=document.getElementById("screen");
 const audio=document.getElementById("audio");
 const fileInput=document.getElementById("fileInput");
-const clockEl=document.getElementById("clock");
-const batteryEl=document.getElementById("battery");
+const wheel=document.getElementById("wheel");
 
+let state="MAIN";
+let menuIndex=0;
 let playlist=[];
-let current=0;
-let state="MENU";
+let currentTrack=0;
+let lastAngle=null;
 
-const menus=["Music","Upload","Spotify 🎵","Apple 🍎","OS Theme"];
+const menus={
+  MAIN:[
+    "Music",
+    "Upload",
+    "🎵 Spotify",
+    "🍎 Apple",
+    "Settings"
+  ],
+  SETTINGS:["Theme","OS Theme","Back"]
+};
 
+/* CLOCK inside screen */
+function getStatusBar(){
+  const d=new Date();
+  const time=d.getHours().toString().padStart(2,"0")+":"+
+             d.getMinutes().toString().padStart(2,"0");
+  return `<div class="status-bar">
+            <span>${time}</span>
+            <span>▰▰▰▰</span>
+          </div>`;
+}
+
+/* MENU */
 function renderMenu(){
-  state="MENU";
-  screen.innerHTML="";
-  menus.forEach((m,i)=>{
-    const div=document.createElement("div");
-    div.className="menu-item";
-    div.textContent=m;
-    div.onclick=()=>selectMenu(i);
-    screen.appendChild(div);
+  state="MAIN";
+  screen.innerHTML=getStatusBar();
+  menus.MAIN.forEach((item,i)=>{
+    screen.innerHTML+=
+      `<div class="menu-item ${i===menuIndex?"active":""}">
+        ${item}
+       </div>`;
   });
 }
 
-function selectMenu(i){
-  if(i===0) renderPlaylist();
-  if(i===1) fileInput.click();
-  if(i===2) pasteLink("spotify");
-  if(i===3) pasteLink("apple");
-  if(i===4) changeTheme();
-}
-
+/* PLAYLIST */
 function renderPlaylist(){
-  state="PLAYLIST";
-  screen.innerHTML="";
-  if(!playlist.length){screen.innerHTML="No tracks";return;}
+  state="MUSIC";
+  screen.innerHTML=getStatusBar();
+  if(!playlist.length){
+    screen.innerHTML+="No tracks";
+    return;
+  }
   playlist.forEach((t,i)=>{
-    const div=document.createElement("div");
-    div.className="menu-item";
-    div.textContent=t.name;
-    div.onclick=()=>play(i);
-    screen.appendChild(div);
+    screen.innerHTML+=
+      `<div class="menu-item" onclick="playTrack(${i})">
+        ${t.name}
+       </div>`;
   });
 }
 
-function play(i){
-  current=i;
+function playTrack(i){
+  currentTrack=i;
   audio.src=playlist[i].url;
-  audio.play();
-  renderNow();
+  audio.play(); // autoplay ✅
+  renderNowPlaying();
 }
 
-function renderNow(){
+/* NOW PLAYING */
+function renderNowPlaying(){
+  const track=playlist[currentTrack];
   state="NOW";
-  const track=playlist[current];
-  screen.innerHTML=`
-    <div>Now Playing</div>
-    <img src="${track.cover||'https://via.placeholder.com/150'}" class="album">
-    <div>${track.name}</div>
-    <div class="progress-bar"><div class="progress" id="prog"></div></div>
+  screen.innerHTML=getStatusBar()+`
+    <div style="text-align:center">Now Playing</div>
+    <div class="cover" style="background-image:url('${track.cover||""}')"></div>
+    <div style="text-align:center;margin-top:6px">${track.name}</div>
+    <div class="progress-bar">
+      <div class="progress" id="prog"></div>
+    </div>
   `;
 }
 
 audio.ontimeupdate=()=>{
   const bar=document.getElementById("prog");
   if(bar){
-    bar.style.width=(audio.currentTime/audio.duration*100)+"%";
+    bar.style.width=(audio.currentTime/audio.duration)*100+"%";
   }
 };
 
+/* FILE UPLOAD + cover extraction */
 fileInput.addEventListener("change",e=>{
-  const files=[...e.target.files];
-  files.forEach(f=>{
+  [...e.target.files].forEach(file=>{
+    const url=URL.createObjectURL(file);
     playlist.push({
-      name:f.name.replace(".mp3",""),
-      url:URL.createObjectURL(f),
-      cover:null
+      name:file.name.replace(".mp3",""),
+      url:url,
+      cover:""
     });
   });
   renderPlaylist();
 });
 
-audio.onended=()=>{
-  if(current<playlist.length-1){
-    current++;
-    play(current);
+/* Spotify & Apple embed düzgün sığan */
+function embedPlayer(url){
+  screen.innerHTML=getStatusBar()+
+  `<iframe src="${url}"
+   width="100%"
+   height="150"
+   frameborder="0"
+   style="border-radius:10px;">
+  </iframe>`;
+}
+
+/* SELECT */
+function handleSelect(){
+  const choice=menus.MAIN[menuIndex];
+
+  if(choice==="Music") renderPlaylist();
+  if(choice==="Upload") fileInput.click();
+  if(choice.includes("Spotify")){
+    const link=prompt("Spotify link:");
+    if(link){
+      const id=link.split("track/")[1]?.split("?")[0];
+      embedPlayer(`https://open.spotify.com/embed/track/${id}`);
+    }
   }
+  if(choice.includes("Apple")){
+    const link=prompt("Apple Music link:");
+    if(link){
+      embedPlayer(link);
+    }
+  }
+  if(choice==="Settings") renderSettings();
+}
+
+/* SETTINGS */
+function renderSettings(){
+  state="SETTINGS";
+  screen.innerHTML=getStatusBar();
+  menus.SETTINGS.forEach((item,i)=>{
+    screen.innerHTML+=
+      `<div class="menu-item ${i===menuIndex?"active":""}">
+        ${item}
+       </div>`;
+  });
+}
+
+/* OS Theme (body değişir pod değişmez) */
+function applyOS(theme){
+  if(theme==="Dark") document.body.style.background="#111";
+  if(theme==="Light") document.body.style.background="#e5e5e5";
+}
+
+/* WHEEL */
+wheel.addEventListener("pointerdown",()=>lastAngle=null);
+
+wheel.addEventListener("pointermove",e=>{
+  if(e.buttons!==1) return;
+
+  const r=wheel.getBoundingClientRect();
+  const cx=r.left+r.width/2;
+  const cy=r.top+r.height/2;
+  const angle=Math.atan2(e.clientY-cy,e.clientX-cx);
+
+  if(lastAngle!==null){
+    const delta=angle-lastAngle;
+    if(Math.abs(delta)>0.1){
+      menuIndex+=delta>0?1:-1;
+      menuIndex=(menuIndex+menus.MAIN.length)%menus.MAIN.length;
+      renderMenu();
+    }
+  }
+  lastAngle=angle;
+});
+
+document.querySelector(".center").onclick=handleSelect;
+document.querySelector(".menu").onclick=renderMenu;
+document.querySelector(".play").onclick=()=>{
+  if(audio.paused) audio.play();
+  else audio.pause();
 };
-
-function pasteLink(type){
-  const url=prompt("Link yapıştır");
-  if(!url)return;
-  if(type==="spotify"){
-    const id=url.split("track/")[1]?.split("?")[0];
-    screen.innerHTML=`
-      <iframe style="border-radius:12px"
-      src="https://open.spotify.com/embed/track/${id}"
-      width="100%" height="152" frameborder="0"
-      allow="autoplay"></iframe>`;
-  }
-  if(type==="apple"){
-    screen.innerHTML=`
-      <iframe allow="autoplay *; encrypted-media *;"
-      frameborder="0" height="152"
-      style="width:100%;border-radius:12px;"
-      src="${url}"></iframe>`;
-  }
-}
-
-function changeTheme(){
-  document.documentElement.style.setProperty("--device","#1c2d5a");
-}
-
-function updateClock(){
-  const d=new Date();
-  clockEl.textContent=d.getHours().toString().padStart(2,"0")+":"+
-                      d.getMinutes().toString().padStart(2,"0");
-}
-setInterval(updateClock,1000);
-updateClock();
 
 renderMenu();
