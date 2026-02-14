@@ -15,7 +15,19 @@
 </div>
 
 <div id="device" class="hidden">
-  <div class="screen" id="screen"></div>
+  <!-- screen-top KALDI ama artık görünmeyecek -->
+  <div class="screen-top" style="display:none;">
+    <span id="clock"></span>
+    <span class="battery">▰▰▰▰</span>
+  </div>
+
+  <!-- SAAT + BATARYA artık screen içinde -->
+  <div class="screen" id="screen">
+    <div class="screen-status">
+      <span id="clock-inline"></span>
+      <span class="battery">▰▰▰▰</span>
+    </div>
+  </div>
 
   <div class="wheel-container">
     <div class="wheel" id="wheel">
