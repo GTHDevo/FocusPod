@@ -2,11 +2,13 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FocusPod OS</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<!-- BOOT SCREEN -->
 <div id="boot">
   <div class="boot-logo">FocusPod</div>
   <div>Booting system...</div>
@@ -15,29 +17,39 @@
   </div>
 </div>
 
+<!-- DEVICE -->
 <div id="device" class="hidden">
-  
+
+  <!-- SCREEN HEADER -->
   <div class="screen-top">
-    <span id="clock"></span>
-    <span id="battery">🔋100%</span>
+    <div id="clock">00:00</div>
+    <div id="battery">100%</div>
   </div>
 
-  <div id="screen" class="screen"></div>
+  <!-- MAIN SCREEN -->
+  <div class="screen" id="screen"></div>
 
+  <!-- CLICK WHEEL -->
   <div class="wheel-container">
-    <div id="wheel" class="wheel">
+    <div class="wheel" id="wheel">
+
       <button class="btn menu">MENU</button>
       <button class="btn prev">◀</button>
       <button class="btn next">▶</button>
       <button class="btn play">⏯</button>
-      <div id="select" class="center"></div>
+
+      <div class="center" id="select"></div>
+
     </div>
   </div>
 
 </div>
 
-<input type="file" id="fileInput" accept=".mp3" multiple hidden>
+<!-- AUDIO PLAYER -->
 <audio id="audio"></audio>
+
+<!-- FILE INPUT -->
+<input type="file" id="fileInput" accept=".mp3" multiple hidden>
 
 <script src="app.js"></script>
 </body>
