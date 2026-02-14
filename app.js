@@ -5,13 +5,14 @@ const wheel=document.getElementById("wheel");
 const audio=document.getElementById("audio");
 const fileInput=document.getElementById("fileInput");
 const clockEl=document.getElementById("clock");
+const batteryEl=document.getElementById("battery");
 
 let state="MAIN";
 let menuIndex=0;
 let playlist=[];
 let currentTrack=0;
 let nowPlayingIndex=null;
-let lastAngle=null;
+let touchStartY=null;
 
 const menus={
 MAIN:["Music","Upload","Spotify","Apple","Settings"],
@@ -19,29 +20,30 @@ SETTINGS:["Theme","Fullscreen","Back"],
 THEMES:["Classic Black","White","Retro Silver","Parlament Blue","Nintendo DS","PS Vita","Switch","iPod Classic","Aqua Blue","Produced Red","Back"]
 };
 
-/* BOOT */
-let load=0;
-const progress=document.querySelector(".boot-progress");
-const bootInt=setInterval(()=>{
-load+=4;
-progress.style.width=load+"%";
-if(load>=100){
-clearInterval(bootInt);
+/* BOOT (Hızlandırıldı) */
 setTimeout(()=>{
 boot.classList.add("hidden");
 device.classList.remove("hidden");
 renderMenu();
-},500);
-}
-},70);
+},1000);
 
-/* CLOCK */
+/* CLOCK + BATTERY */
 function updateClock(){
 const d=new Date();
 clockEl.textContent=d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0");
 }
 setInterval(updateClock,1000);
 updateClock();
+
+if(navigator.getBattery){
+navigator.getBattery().then(b=>{
+function updateBattery(){
+batteryEl.textContent=Math.floor(b.level*100)+"%";
+}
+updateBattery();
+b.addEventListener("levelchange",updateBattery);
+});
+}
 
 /* MENU */
 function renderMenu(){
@@ -50,7 +52,7 @@ screen.innerHTML="";
 menus.MAIN.forEach((item,i)=>{
 const div=document.createElement("div");
 div.className="menu-item"+(i===menuIndex?" active":"");
-div.textContent=item;
+div.innerHTML=item;
 screen.appendChild(div);
 });
 }
@@ -82,13 +84,15 @@ const track=playlist[nowPlayingIndex];
 if(!track)return;
 state="NOW";
 screen.innerHTML=`
+<div class="now-ui">
 <div>Now Playing</div>
 <div class="cover">
-<img src="https://picsum.photos/200?random=${Math.random()}">
+<img src="https://picsum.photos/300?random=${Math.random()}">
 </div>
-<div>${track.name}</div>
+<div class="song-title">${track.name}</div>
 <div class="progress-bar">
 <div class="progress" id="prog"></div>
+</div>
 </div>`;
 }
 
@@ -101,7 +105,7 @@ if(bar)bar.style.width=percent+"%";
 };
 
 audio.onended=()=>{
-if(playlist.length>0){
+if(playlist.length){
 currentTrack=(currentTrack+1)%playlist.length;
 playTrack(currentTrack);
 }
@@ -113,29 +117,32 @@ fileInput.addEventListener("change",e=>{
 playlist.push({name:f.name.replace(".mp3",""),url:URL.createObjectURL(f)});
 });
 if(playlist.length===1)playTrack(0);
-else renderPlaylist();
 });
+
+/* EMBED FIX */
+function loadEmbed(link){
+if(!link)return;
+if(link.includes("spotify")){
+link=link.replace("open.spotify.com","open.spotify.com/embed");
+}
+if(link.includes("music.apple.com")){
+link=link.replace("music.apple.com","embed.music.apple.com");
+}
+screen.innerHTML=`<iframe src="${link}" allow="autoplay"></iframe>`;
+}
 
 /* SELECT */
 function handleSelect(){
 const choice=menus.MAIN[menuIndex];
 if(choice==="Music")renderPlaylist();
 if(choice==="Upload")fileInput.click();
-if(choice==="Spotify")loadEmbed(prompt("Spotify link"));
-if(choice==="Apple")loadEmbed(prompt("Apple link"));
+if(choice==="Spotify")screen.innerHTML=`<input id="embedInput" placeholder="Spotify link"><button onclick="loadEmbed(document.getElementById('embedInput').value)">OK</button>`;
+if(choice==="Apple")screen.innerHTML=`<input id="embedInput" placeholder="Apple link"><button onclick="loadEmbed(document.getElementById('embedInput').value)">OK</button>`;
 if(choice==="Settings")renderSettings();
-}
-
-function loadEmbed(link){
-if(!link)return;
-let embed=link;
-if(link.includes("spotify.com"))embed=link.replace("open.","").replace("/track/","/embed/track/");
-screen.innerHTML=`<iframe src="${embed}"></iframe>`;
 }
 
 /* SETTINGS */
 function renderSettings(){
-state="SETTINGS";
 screen.innerHTML="";
 menus.SETTINGS.forEach(item=>{
 const div=document.createElement("div");
@@ -184,27 +191,21 @@ localStorage.setItem("fp-theme",color);
 const saved=localStorage.getItem("fp-theme");
 if(saved)document.documentElement.style.setProperty("--device",saved);
 
-/* WHEEL */
-wheel.addEventListener("pointerdown",()=>{lastAngle=null;});
-wheel.addEventListener("pointermove",e=>{
-if(e.buttons!==1)return;
+/* TOUCH SCROLL */
+screen.addEventListener("touchstart",e=>{
+touchStartY=e.touches[0].clientY;
+});
+screen.addEventListener("touchmove",e=>{
 if(state!=="MAIN")return;
-const r=wheel.getBoundingClientRect();
-const cx=r.left+r.width/2;
-const cy=r.top+r.height/2;
-const angle=Math.atan2(e.clientY-cy,e.clientX-cx);
-if(lastAngle!==null){
-const delta=angle-lastAngle;
-if(Math.abs(delta)>0.1){
-menuIndex+=delta>0?1:-1;
+let diff=e.touches[0].clientY-touchStartY;
+if(Math.abs(diff)>30){
+menuIndex+=diff>0?-1:1;
 menuIndex=(menuIndex+menus.MAIN.length)%menus.MAIN.length;
 renderMenu();
+touchStartY=e.touches[0].clientY;
 }
-}
-lastAngle=angle;
 });
 
-/* BUTTONS */
 document.querySelector(".menu").onclick=()=>renderMenu();
 document.querySelector(".play").onclick=()=>audio.paused?audio.play():audio.pause();
 document.querySelector(".prev").onclick=()=>{if(playlist.length){currentTrack=(currentTrack-1+playlist.length)%playlist.length;playTrack(currentTrack);}};
