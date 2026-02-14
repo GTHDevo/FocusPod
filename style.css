@@ -14,7 +14,7 @@ height:100vh;
 
 .boot-logo{font-size:28px;margin-bottom:10px;}
 .boot-bar{width:200px;height:6px;background:#333;margin:auto;border-radius:5px;overflow:hidden;}
-.boot-progress{height:100%;width:0%;background:white;animation:boot 2s forwards;}
+.boot-progress{height:100%;width:0%;background:white;animation:boot 1s forwards;}
 @keyframes boot{to{width:100%;}}
 
 #device{
@@ -46,7 +46,7 @@ z-index:5;
 }
 
 .screen{
-height:180px;
+height:200px;
 background:black;
 color:white;
 border-radius:12px;
@@ -59,9 +59,40 @@ box-sizing:border-box;
 
 .screen iframe{
 width:100%;
-height:150px;
+height:160px;
 border:none;
 border-radius:8px;
+}
+
+.now-ui{
+text-align:center;
+}
+
+.song-title{
+font-weight:bold;
+margin-top:6px;
+font-size:14px;
+}
+
+.cover{
+width:100px;
+height:100px;
+border-radius:50%;
+overflow:hidden;
+margin:auto;
+animation:spin 6s linear infinite;
+box-shadow:0 0 10px rgba(255,255,255,0.3);
+}
+
+.cover img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+@keyframes spin{
+from{transform:rotate(0deg);}
+to{transform:rotate(360deg);}
 }
 
 .wheel-container{
@@ -120,23 +151,3 @@ overflow:hidden;
 }
 
 .progress{width:0%;height:100%;background:white;}
-
-.cover{
-width:90px;
-height:90px;
-border-radius:10px;
-overflow:hidden;
-margin:auto;
-animation:spin 8s linear infinite;
-}
-
-.cover img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-@keyframes spin{
-from{transform:rotate(0deg);}
-to{transform:rotate(360deg);}
-}
