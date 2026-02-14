@@ -14,6 +14,7 @@ body {
   text-align:center;
   color:white;
 }
+
 .boot-logo { font-size:28px; margin-bottom:10px; }
 .boot-bar { width:200px; height:6px; background:#333; margin:auto; border-radius:5px; overflow:hidden; }
 .boot-progress { height:100%; width:0%; background:white; animation:boot 2s forwards; }
@@ -24,13 +25,19 @@ body {
   height:520px;
   background:var(--device,#eee);
   border-radius:40px;
-  box-shadow:0 15px 35px rgba(0,0,0,0.5), inset 0 5px 15px rgba(255,255,255,0.1);
+  box-shadow:0 15px 35px rgba(0,0,0,0.5),
+             inset 0 5px 15px rgba(255,255,255,0.1);
   padding:20px;
   box-sizing:border-box;
   position:relative;
 }
 
-.screen-top { display:flex; justify-content:space-between; padding:5px 10px; color:white; }
+.screen-top {
+  display:flex;
+  justify-content:space-between;
+  padding:5px 10px;
+  color:white;
+}
 
 .screen {
   height:180px;
@@ -38,8 +45,17 @@ body {
   color:white;
   border-radius:12px;
   padding:10px;
-  overflow:hidden;
+  overflow-y:auto;
+  overflow-x:hidden;
   position:relative;
+  box-sizing:border-box;
+}
+
+.screen iframe{
+  width:100%;
+  height:160px;
+  border:none;
+  border-radius:8px;
 }
 
 .wheel-container {
@@ -52,14 +68,24 @@ body {
 .wheel {
   width:260px;
   height:260px;
-  background:linear-gradient(145deg,#ddd,#bbb);
+  background:#ddd;
   border-radius:50%;
   position:relative;
-  box-shadow: inset 0 8px 12px rgba(0,0,0,0.2),
-              0 6px 12px rgba(0,0,0,0.3);
+  aspect-ratio:1/1;
+  box-shadow:
+    inset 0 8px 12px rgba(0,0,0,0.2),
+    0 6px 12px rgba(0,0,0,0.3);
 }
 
-.btn { position:absolute; background:none; border:none; font-weight:bold; cursor:pointer; z-index:10; }
+.btn {
+  position:absolute;
+  background:none;
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
+  z-index:10;
+}
+
 .menu { top:20px; left:50%; transform:translateX(-50%); }
 .prev { left:20px; top:50%; transform:translateY(-50%); }
 .next { right:20px; top:50%; transform:translateY(-50%); }
@@ -77,28 +103,27 @@ body {
   box-shadow: inset 0 4px 8px rgba(0,0,0,0.2);
 }
 
-.menu-item { padding:6px; cursor:pointer; }
-.menu-item.active { background:white; color:black; }
-
-.progress-bar { width:100%; height:6px; background:#333; margin-top:10px; border-radius:3px; overflow:hidden; }
-.progress { width:0%; height:100%; background:white; }
-
-/* Pod Themes */
-:root {
-  --device: #f4f4f4;
-}
-.theme-classic-black { --device:#111; }
-.theme-white { --device:#f4f4f4; }
-.theme-retro-silver { --device:#bfc3c9; }
-.theme-parlament-blue { --device:#1c2d5a; }
-.theme-nintendo-ds { --device:#70c0f0; }
-.theme-ps-vita { --device:#00aaff; }
-.theme-switch { --device:#ff4d4d; }
-.theme-ipod-classic { --device:#f2e5d0; }
-.theme-aqua-blue { --device:#89c7f2; }
-.theme-produced-red { --device:#FF3B30; }
-
-/* Animations */
 .menu-item {
-  transition: background 0.2s ease, color 0.2s ease;
+  padding:6px;
+  cursor:pointer;
+}
+
+.menu-item.active {
+  background:white;
+  color:black;
+}
+
+.progress-bar {
+  width:100%;
+  height:6px;
+  background:#333;
+  margin-top:10px;
+  border-radius:3px;
+  overflow:hidden;
+}
+
+.progress {
+  width:0%;
+  height:100%;
+  background:white;
 }
