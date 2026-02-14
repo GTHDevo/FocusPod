@@ -1,5 +1,3 @@
-/* FocusPod OS FINAL PATCH - STABLE */
-
 const boot=document.getElementById("boot");
 const device=document.getElementById("device");
 const screen=document.getElementById("screen");
@@ -18,14 +16,27 @@ let lastAngle=null;
 const menus={
   MAIN:["Music","Upload","Spotify","Apple","Settings"],
   SETTINGS:["Theme","Fullscreen","Back"],
-  THEMES:["Classic Black","White","Retro Silver","Parlament Blue","Nintendo DS","PS Vita","Switch","iPod Classic","Aqua Blue","Product Red","Custom HEX","Back"]
+  THEMES:[
+    "Classic Black",
+    "White",
+    "Retro Silver",
+    "Parlament Blue",
+    "Nintendo DS",
+    "PS Vita",
+    "Switch",
+    "iPod Classic",
+    "Aqua Blue",
+    "Produced Red",
+    "Custom HEX",
+    "Back"
+  ]
 };
 
 /* BOOT */
 let load=0;
 const progress=document.querySelector(".boot-progress");
 const bootInt=setInterval(()=>{
-  load+=3;
+  load+=4;
   progress.style.width=load+"%";
   if(load>=100){
     clearInterval(bootInt);
@@ -33,14 +44,16 @@ const bootInt=setInterval(()=>{
       boot.classList.add("hidden");
       device.classList.remove("hidden");
       renderMenu();
-    },600);
+    },500);
   }
-},80);
+},70);
 
 /* CLOCK */
 function updateClock(){
   const d=new Date();
-  clockEl.textContent=d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0");
+  clockEl.textContent=
+    d.getHours().toString().padStart(2,"0")+":"+
+    d.getMinutes().toString().padStart(2,"0");
 }
 setInterval(updateClock,1000);
 updateClock();
@@ -53,7 +66,6 @@ function renderMenu(){
     const div=document.createElement("div");
     div.className="menu-item"+(i===menuIndex?" active":"");
     div.textContent=item;
-    div.onclick=()=>{ menuIndex=i; handleSelect(); };
     screen.appendChild(div);
   });
 }
@@ -62,7 +74,10 @@ function renderMenu(){
 function renderPlaylist(){
   state="MUSIC";
   screen.innerHTML="";
-  if(!playlist.length){ screen.textContent="No tracks"; return; }
+  if(!playlist.length){
+    screen.textContent="No tracks";
+    return;
+  }
   playlist.forEach((t,i)=>{
     const div=document.createElement("div");
     div.className="menu-item";
@@ -73,7 +88,6 @@ function renderPlaylist(){
 }
 
 function playTrack(index){
-  if(!playlist[index]) return;
   currentTrack=index;
   nowPlayingIndex=index;
   audio.src=playlist[index].url;
@@ -85,28 +99,35 @@ function renderNowPlaying(){
   const track=playlist[nowPlayingIndex];
   if(!track) return;
   state="NOW";
-  screen.innerHTML=`<div>Now Playing</div><div>${track.name}</div><div class="progress-bar"><div class="progress" id="prog"></div></div>`;
+  screen.innerHTML=`
+    <div>Now Playing</div>
+    <div>${track.name}</div>
+    <div class="progress-bar">
+      <div class="progress" id="prog"></div>
+    </div>
+  `;
 }
 
 audio.ontimeupdate=()=>{
-  if(state==="NOW" && nowPlayingIndex!==null){
+  if(state==="NOW"){
     const percent=(audio.currentTime/audio.duration)*100;
     const bar=document.getElementById("prog");
     if(bar) bar.style.width=percent+"%";
   }
 };
 
-/* FILE UPLOAD */
+/* FILE */
 fileInput.addEventListener("change",e=>{
-  const files=[...e.target.files];
-  files.forEach(f=>{
-    playlist.push({name:f.name.replace(".mp3",""), url:URL.createObjectURL(f)});
+  [...e.target.files].forEach(f=>{
+    playlist.push({
+      name:f.name.replace(".mp3",""),
+      url:URL.createObjectURL(f)
+    });
   });
-  e.target.value="";
   renderPlaylist();
 });
 
-/* HANDLE SELECT */
+/* SELECT */
 function handleSelect(){
   const choice=menus.MAIN[menuIndex];
   if(choice==="Music") renderPlaylist();
@@ -116,39 +137,11 @@ function handleSelect(){
   if(choice==="Settings") renderSettings();
 }
 
-/* LINK INPUT */
-let linkBuffer="";
-let linkType=null;
-function handleLinkInput(type){ state="LINK_INPUT"; linkType=type; linkBuffer=""; renderLinkScreen(); }
-function renderLinkScreen(){ screen.innerHTML=`<div>Paste ${linkType} link:</div><div style='margin-top:10px; word-break:break-all; font-size:12px;'>${linkBuffer||"_"}</div>`; }
-document.addEventListener("keydown",e=>{
-  if(state!=="LINK_INPUT") return;
-  if(e.key==="Enter"){ 
-    if(linkType==="Spotify") embedSpotify(linkBuffer); 
-    if(linkType==="Apple") embedApple(linkBuffer); 
-    return; 
-  }
-  if(e.key==="Backspace"){ linkBuffer=linkBuffer.slice(0,-1); renderLinkScreen(); return; }
-  if(e.key.length===1){ linkBuffer+=e.key; renderLinkScreen(); }
-});
-
-/* EMBED */
-function embedSpotify(url){
-  const id=url.split("track/")[1]?.split("?")[0];
-  if(!id) return;
-  nowPlayingIndex=null;
-  screen.innerHTML=`<iframe src="https://open.spotify.com/embed/track/${id}" width="100%" height="200"></iframe>`;
-}
-function embedApple(url){
-  nowPlayingIndex=null;
-  screen.innerHTML=`<iframe src="${url}" width="100%" height="200"></iframe>`;
-}
-
 /* SETTINGS */
 function renderSettings(){
   state="SETTINGS";
   screen.innerHTML="";
-  menus.SETTINGS.forEach((item)=>{
+  menus.SETTINGS.forEach(item=>{
     const div=document.createElement("div");
     div.className="menu-item";
     div.textContent=item;
@@ -156,15 +149,17 @@ function renderSettings(){
     screen.appendChild(div);
   });
 }
+
 function handleSettings(choice){
   if(choice==="Theme") renderThemes();
   if(choice==="Fullscreen") document.documentElement.requestFullscreen();
   if(choice==="Back") renderMenu();
 }
+
 function renderThemes(){
   state="THEME";
   screen.innerHTML="";
-  menus.THEMES.forEach((t)=>{
+  menus.THEMES.forEach(t=>{
     const div=document.createElement("div");
     div.className="menu-item";
     div.textContent=t;
@@ -172,6 +167,7 @@ function renderThemes(){
     screen.appendChild(div);
   });
 }
+
 function applyTheme(choice){
   let color="";
   if(choice==="Classic Black") color="#111";
@@ -183,24 +179,38 @@ function applyTheme(choice){
   if(choice==="Switch") color="#ff4d4d";
   if(choice==="iPod Classic") color="#f2e5d0";
   if(choice==="Aqua Blue") color="#89c7f2";
-  if(choice==="Product Red") color="#FF3B30";
-  if(choice==="Custom HEX"){ const hex=prompt("HEX renk gir (#xxxxxx)"); if(hex) color=hex; }
-  if(color){ document.documentElement.style.setProperty("--device",color); localStorage.setItem("fp-theme",color); }
+  if(choice==="Produced Red") color="#C8102E";
+  if(choice==="Custom HEX"){
+    const hex=prompt("HEX (#xxxxxx)");
+    if(hex) color=hex;
+  }
+  if(color){
+    document.documentElement.style.setProperty("--device",color);
+    localStorage.setItem("fp-theme",color);
+  }
 }
-const saved=localStorage.getItem("fp-theme"); if(saved) document.documentElement.style.setProperty("--device",saved);
 
-/* WHEEL NAV */
+const saved=localStorage.getItem("fp-theme");
+if(saved) document.documentElement.style.setProperty("--device",saved);
+
+/* WHEEL ROTATION */
+wheel.addEventListener("pointerdown",()=>{ lastAngle=null; });
+
 wheel.addEventListener("pointermove",e=>{
   if(e.buttons!==1) return;
+  if(state!=="MAIN") return;
+
   const r=wheel.getBoundingClientRect();
-  const cx=r.left+r.width/2, cy=r.top+r.height/2;
+  const cx=r.left+r.width/2;
+  const cy=r.top+r.height/2;
   const angle=Math.atan2(e.clientY-cy,e.clientX-cx);
+
   if(lastAngle!==null){
     const delta=angle-lastAngle;
-    if(Math.abs(delta)>0.05){ 
-      menuIndex+=delta>0?1:-1; 
-      menuIndex=(menuIndex+menus.MAIN.length)%menus.MAIN.length; 
-      renderMenu(); 
+    if(Math.abs(delta)>0.1){
+      menuIndex+=delta>0?1:-1;
+      menuIndex=(menuIndex+menus.MAIN.length)%menus.MAIN.length;
+      renderMenu();
     }
   }
   lastAngle=angle;
@@ -208,22 +218,30 @@ wheel.addEventListener("pointermove",e=>{
 
 /* BUTTONS */
 document.querySelector(".menu").onclick=()=>{
-  if(state==="MAIN") state==="NOW"?renderNowPlaying():renderNowPlaying();
-  else if(state==="NOW") renderMenu();
+  if(state==="NOW") renderMenu();
   else renderMenu();
 };
-document.querySelector(".play").onclick=()=>{ if(audio.paused) audio.play(); else audio.pause(); };
-document.querySelector(".prev").onclick=()=>{ if(nowPlayingIndex!==null){ currentTrack=(currentTrack-1+playlist.length)%playlist.length; playTrack(currentTrack); } };
-document.querySelector(".next").onclick=()=>{ if(nowPlayingIndex!==null){ currentTrack=(currentTrack+1)%playlist.length; playTrack(currentTrack); } };
+
+document.querySelector(".play").onclick=()=>{
+  if(audio.paused) audio.play();
+  else audio.pause();
+};
+
+document.querySelector(".prev").onclick=()=>{
+  if(nowPlayingIndex!==null){
+    currentTrack=(currentTrack-1+playlist.length)%playlist.length;
+    playTrack(currentTrack);
+  }
+};
+
+document.querySelector(".next").onclick=()=>{
+  if(nowPlayingIndex!==null){
+    currentTrack=(currentTrack+1)%playlist.length;
+    playTrack(currentTrack);
+  }
+};
+
 document.getElementById("select").onclick=handleSelect;
 
-/* TOUCH */
-screen.addEventListener("click",e=>{
-  if(!e.target.classList.contains("menu-item")) return;
-  const items=[...document.querySelectorAll(".menu-item")];
-  menuIndex=items.indexOf(e.target);
-  handleSelect();
-});
-
-/* INITIAL */
+/* INIT */
 renderMenu();
