@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FocusPod OS</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -10,37 +9,34 @@
 
 <div id="boot">
   <div class="boot-logo">FocusPod</div>
-  <div class="boot-text">Booting system...</div>
-  <div class="boot-bar"><div class="boot-progress"></div></div>
+  <div>Booting system...</div>
+  <div class="boot-bar">
+    <div class="boot-progress"></div>
+  </div>
 </div>
 
 <div id="device" class="hidden">
-  <!-- screen-top KALDI ama artık görünmeyecek -->
-  <div class="screen-top" style="display:none;">
+  
+  <div class="screen-top">
     <span id="clock"></span>
-    <span class="battery">▰▰▰▰</span>
+    <span id="battery">🔋100%</span>
   </div>
 
-  <!-- SAAT + BATARYA artık screen içinde -->
-  <div class="screen" id="screen">
-    <div class="screen-status">
-      <span id="clock-inline"></span>
-      <span class="battery">▰▰▰▰</span>
-    </div>
-  </div>
+  <div id="screen" class="screen"></div>
 
   <div class="wheel-container">
-    <div class="wheel" id="wheel">
+    <div id="wheel" class="wheel">
       <button class="btn menu">MENU</button>
       <button class="btn prev">◀</button>
       <button class="btn next">▶</button>
       <button class="btn play">⏯</button>
-      <div class="center" id="select"></div>
+      <div id="select" class="center"></div>
     </div>
   </div>
+
 </div>
 
-<input type="file" id="fileInput" accept="audio/*" hidden>
+<input type="file" id="fileInput" accept=".mp3" multiple hidden>
 <audio id="audio"></audio>
 
 <script src="app.js"></script>
